@@ -1,0 +1,44 @@
+name: WidgetBoard
+options:
+  bundleIdPrefix: dev.widgetboard
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  WidgetBoard:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.widgetboard.app
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Widget Board
+        UILaunchScreen: {}
+        # The prototype server is plain http on localhost.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    dependencies:
+      - target: BoardWidget
+  BoardWidget:
+    type: app-extension
+    platform: iOS
+    sources: [Widget, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.widgetboard.app.widget
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleDisplayName: Board
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
