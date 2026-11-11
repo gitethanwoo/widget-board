@@ -30,6 +30,7 @@ Text sizes are the points used in the reviewed mockups; the native renderer uses
 | Chart axis letters | 9 |
 | Updated footer | 10, secondary |
 
+- A Stat or Progress headline is large when it is a figure and medium when it is a phrase: a value that contains a space and does not start with a digit ("Needs you", "All clear", "$51 over") draws medium; "21 days", "3:30 PM" and "Yes" draw large.
 - Stacked text is 7 points apart. A bar, step bar or split bar under a headline value needs 12; a chart, column chart or grid needs 15. Text that tight against a chart reads as cramped.
 - Captions under a bar stay on one line: one caption at each end rather than a wrapped sentence.
 - Grids and charts fill the width they are given.

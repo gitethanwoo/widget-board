@@ -24,6 +24,14 @@ enum ValueSize {
         case .small: .title3
         }
     }
+
+    /// Words read better smaller than figures do: "Needs you" and "$51 over"
+    /// are phrases and draw medium; "21 days", "3:30 PM" and "Yes" draw large.
+    static func headline(for value: String) -> ValueSize {
+        let text = value.trimmingCharacters(in: .whitespaces)
+        let startsWithDigit = text.first?.isNumber ?? false
+        return text.contains(where: \.isWhitespace) && !startsWithDigit ? .medium : .large
+    }
 }
 
 /// Semantic colors for one board. `Board.alert` swaps every color for dark ink

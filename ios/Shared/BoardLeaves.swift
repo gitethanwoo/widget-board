@@ -64,7 +64,7 @@ private struct StatLeaf: View {
         let detailed = layout == .detail
         VStack(alignment: .leading, spacing: 0) {
             if !props.label.isEmpty { LeafLabel(text: props.label, detailed: detailed) }
-            LeafValue(text: props.value, size: layout == .supporting ? .small : .large, tone: props.tone, detailed: detailed)
+            LeafValue(text: props.value, size: layout == .supporting ? .small : .headline(for: props.value), tone: props.tone, detailed: detailed)
                 .padding(.top, props.label.isEmpty ? 0 : 1)
             if layout != .supporting {
                 if let change = props.change { ChangeChip(change: change).padding(.top, 5) }
@@ -90,7 +90,8 @@ private struct ProgressLeaf: View {
         let supporting = layout == .supporting
         VStack(alignment: .leading, spacing: 0) {
             LeafLabel(text: props.label, detailed: detailed)
-            LeafValue(text: props.display ?? percentText(props.value), size: supporting ? .small : .large, tone: props.tone, detailed: detailed)
+            let headline = props.display ?? percentText(props.value)
+            LeafValue(text: headline, size: supporting ? .small : .headline(for: headline), tone: props.tone, detailed: detailed)
                 .padding(.top, 1)
             BarTrack(fraction: props.value, color: palette.color(props.tone), marker: props.marker)
                 .padding(.top, supporting ? 6 : 12)
