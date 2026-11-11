@@ -14,7 +14,7 @@ const components = widgetCatalog.data.components;
 function elementSchema<Name extends keyof typeof components>(name: Name) {
   return z.strictObject({
     type: z.literal(name),
-    props: components[name].props,
+    props: components[name].props as (typeof components)[Name]["props"],
     children: z.array(z.string()),
   });
 }
@@ -83,9 +83,21 @@ export function checkSpec(input: unknown): SpecCheck {
   return problems.length > 0 ? { ok: false, problems } : { ok: true, spec };
 }
 
+/** Shared writing guidance for MCP initialization and tool discovery. */
+export const widgetWritingGuidance = [
+  "Help the user answer one question at a glance. Choose the smallest useful answer before choosing components.",
+  "Default to one Stat (one label and one value) or one short Note. Empty space is intentional. A medium widget's extra capacity is optional, not a quota; add supporting items only when the user needs them at a glance.",
+  "When a short comparison adds meaning, keep it inside the Stat as supportingText. Small widgets show label, styled value, and supportingText together. For example: This Week / $312.50 / Down 18% from last month. Do not flatten these into a Note or put the comparison in a separate leaf that the small widget hides. Omit supportingText when unnecessary; use caption for detail-only qualifications.",
+  "Before saving, ask: if I remove this word or element, does the user lose meaning? If not, remove it. Avoid repeated headings, redundant currency codes, save timestamps, source commentary, and decorative status text.",
+  "Simplicity must preserve meaning. Keep the time period, units, and essential scope or exclusions in the visible label/value. Captions and Board titles appear only in details, so never rely on them to explain what the main number means.",
+  "Respect the requested calculation exactly. Excluding housing does not mean excluding every fixed expense. Use verified data; never invent an amount, budget, percentage, or freshness claim. Resolve material ambiguity from connected context or ask one focused question before calculating.",
+  "Example: for weekly spending excluding housing, use label \"Week · excluding housing\" and the verified currency amount. Keep the reason housing is excluded and the exact date range in details. Do not add monthly totals, pending amounts, a budget, or a progress bar unless requested.",
+  "Small widgets show the first leaf only; medium widgets may show the next two. Captions are detail-only; extra Stat, Progress, and Note leaves can appear on medium widgets. Keep unneeded report sections out of the canvas rather than filling the available space. Canvas save time is not source freshness.",
+].join("\n");
+
 /** Human/agent-readable component reference, generated from the catalog. */
 export function catalogReference(): string {
-  const lines: string[] = [];
+  const lines: string[] = [widgetWritingGuidance];
   for (const [name, def] of Object.entries(components)) {
     lines.push(`- ${name}: ${def.description} Example props: ${JSON.stringify(def.example)}`);
   }

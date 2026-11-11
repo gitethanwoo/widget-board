@@ -1,16 +1,5 @@
-import AppIntents
 import SwiftUI
 import WidgetKit
-
-/// Lets each widget on the home screen pick which board it shows
-/// (long-press the widget, then Edit Widget).
-struct SelectBoardIntent: WidgetConfigurationIntent {
-    static let title: LocalizedStringResource = "Board"
-    static let description = IntentDescription("Choose which board this widget shows.")
-
-    @Parameter(title: "Board name", default: "budget")
-    var board: String
-}
 
 struct BoardEntry: TimelineEntry {
     enum Content {
@@ -29,32 +18,37 @@ struct BoardProvider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: SelectBoardIntent, in context: Context) async -> BoardEntry {
-        await entry(for: configuration)
+        await entry()
     }
 
     func timeline(for configuration: SelectBoardIntent, in context: Context) async -> Timeline<BoardEntry> {
+        if #available(iOS 26.0, *) { _ = await WidgetPushRegistration.shared.refresh() }
         // One entry, then ask to be reloaded in 15 minutes. iOS treats this as
         // a request and budgets how often it actually happens.
-        Timeline(entries: [await entry(for: configuration)], policy: .after(.now.addingTimeInterval(15 * 60)))
+        return Timeline(entries: [await entry()], policy: .after(.now.addingTimeInterval(15 * 60)))
     }
 
-    private func entry(for configuration: SelectBoardIntent) async -> BoardEntry {
+    private func entry() async -> BoardEntry {
         do {
-            return BoardEntry(date: .now, content: .board(try await BoardClient.fetch(configuration.board)))
+            return BoardEntry(date: .now, content: .board(try await BoardClient.fetch()))
         } catch {
+            if BoardClient.allowsCachedBoard(after: error), let cached = BoardClient.cached() {
+                return BoardEntry(date: .now, content: .board(cached))
+            }
             return BoardEntry(date: .now, content: .failure(error.localizedDescription))
         }
     }
 }
 
 struct BoardWidgetView: View {
+    @Environment(\.widgetFamily) private var family
     let entry: BoardEntry
 
     var body: some View {
         Group {
             switch entry.content {
             case .board(let board):
-                BoardView(board: board)
+                BoardView(board: board, family: family)
             case .failure(let message):
                 VStack(alignment: .leading, spacing: 4) {
                     Image(systemName: "exclamationmark.triangle")
@@ -72,17 +66,38 @@ struct BoardWidgetView: View {
             }
         }
         .containerBackground(.background, for: .widget)
+        .widgetURL(URL(string: "widgetboard://open"))
     }
 }
 
 @main
+struct BoardWidgets: WidgetBundle {
+    var body: some Widget { availableWidget }
+
+    // WidgetBundleBuilder supports availability-only branches, not if/else.
+    // Erase both configurations through the same builder result to keep the
+    // existing widget kind on older iOS versions without duplicate widgets.
+    private var availableWidget: some Widget {
+        if #available(iOS 26.0, *) {
+            return WidgetBundleBuilder.buildOptional(WidgetBundleBuilder.buildLimitedAvailability(PushBoardWidget()))
+        } else {
+            return WidgetBundleBuilder.buildOptional(WidgetBundleBuilder.buildLimitedAvailability(BoardWidget()))
+        }
+    }
+}
+
+@available(iOS 26.0, *)
+struct PushBoardWidget: Widget {
+    var body: some WidgetConfiguration { BoardWidget().body.pushHandler(BoardPushHandler.self) }
+}
+
 struct BoardWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "BoardWidget", intent: SelectBoardIntent.self, provider: BoardProvider()) { entry in
             BoardWidgetView(entry: entry)
         }
         .configurationDisplayName("Board")
-        .description("Shows whatever your agents last put on a board.")
+        .description("Shows the canvas your agents update.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

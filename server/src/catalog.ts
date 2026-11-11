@@ -31,7 +31,7 @@ export const widgetSchema = defineSchema(
     defaultRules: [
       "The root element MUST be a Board.",
       'Every element MUST include a "children" array. Leaf elements use an empty array.',
-      "A widget is small and cannot scroll. A small widget fits about 2 leaf blocks, a medium widget about 4.",
+      "Design a glance, not a report. Put the most important leaf first: small widgets show only that leaf; medium widgets add at most the next two. Additional content is available in the app.",
     ],
   },
 );
@@ -46,30 +46,31 @@ export const widgetCatalog = defineCatalog(widgetSchema, {
   components: {
     Board: {
       props: z.strictObject({
-        title: z.string().max(40).nullable(),
+        title: z.string().max(40).nullable().describe("Optional detail-view title. Use null when the Stat label already provides the context."),
       }),
       slots: ["default"],
       description:
-        "Root container. Stacks its children vertically. Optional small title shown at the top.",
+        "Root container. Order children by importance. The first leaf is the headline. The optional title is for the app detail view; it does not add a heading to the widget.",
       example: { title: "Budget" },
     },
     Row: {
       props: z.strictObject({}),
       slots: ["default"],
-      description: "Lays out 2 or 3 children side by side with equal width.",
+      description: "Groups 2 or 3 related details. Widget layouts adapt the group to available space; keep the headline before supporting details.",
       example: {},
     },
     Stat: {
       props: z.strictObject({
-        label: z.string().max(24),
-        value: z.string().max(16),
-        caption: z.string().max(40).nullable(),
+        label: z.string().max(24).describe("One concise label, including the essential time period or exclusion. Visible on the widget."),
+        value: z.string().max(16).describe("The verified, formatted value, with its unit when needed; e.g. $312."),
+        supportingText: z.string().max(40).nullable().optional().describe("Optional short comparison or context displayed below the styled value on small and medium widgets. Use only when useful at a glance; keep technical details in caption."),
+        caption: z.string().max(40).nullable().describe("Optional detail-only context. Use null unless it adds useful information."),
         tone,
       }),
       slots: [],
       description:
-        "A big number with a small label above it and an optional caption below. The value is preformatted text, e.g. \"$1,240\" or \"72%\".",
-      example: { label: "Groceries left", value: "$312", caption: "of $800", tone: "good" },
+        "One styled metric: label, prominent value, and optional supportingText below it. All three stay together on small and medium widgets. Use supportingText for a useful comparison, not a separate Note or a multiline plain-text replacement. Caption remains detail-only. The value is preformatted text, e.g. \"$1,240\" or \"72%\".",
+      example: { label: "This Week", value: "$312.50", supportingText: "Down 18% from last month", caption: null, tone: "accent" },
     },
     Progress: {
       props: z.strictObject({
@@ -80,7 +81,7 @@ export const widgetCatalog = defineCatalog(widgetSchema, {
       }),
       slots: [],
       description:
-        "A labeled progress bar. value is a fraction from 0 to 1. The caption sits on the right, e.g. \"$1,240 of $2,000\".",
+        "A labeled progress bar. value is a fraction from 0 to 1. The caption is available in the app details, e.g. \"$1,240 of $2,000\".",
       example: { label: "Dining out", value: 0.62, caption: "$248 of $400", tone: "warn" },
     },
     Note: {
@@ -90,7 +91,7 @@ export const widgetCatalog = defineCatalog(widgetSchema, {
       }),
       slots: [],
       description:
-        "Free text. loud=true renders it large and bold for reminders like \"DON'T FORGET!!\".",
+        "One brief thought, ideally under 55 characters. Put longer explanations in a later Note for the app. loud=true emphasizes reminders like \"DON'T FORGET!!\".",
       example: { text: "Pick up the dry cleaning", loud: false },
     },
   },

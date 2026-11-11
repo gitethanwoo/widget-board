@@ -8,7 +8,8 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    CURRENT_PROJECT_VERSION: "7"
+    CODE_SIGN_STYLE: Automatic
 targets:
   WidgetBoard:
     type: application
@@ -17,14 +18,22 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.widgetboard.app
+    entitlements:
+      path: App/WidgetBoard.entitlements
+      properties:
+        aps-environment: development
+        com.apple.security.application-groups: [group.dev.widgetboard.shared]
+        keychain-access-groups: ["$(AppIdentifierPrefix)dev.widgetboard.shared"]
     info:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: Widget Board
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}
-        # The prototype server is plain http on localhost.
-        NSAppTransportSecurity:
-          NSAllowsLocalNetworking: true
+        BoardKeychainAccessGroup: "$(AppIdentifierPrefix)dev.widgetboard.shared"
+        CFBundleURLTypes:
+          - CFBundleURLName: dev.widgetboard.app
+            CFBundleURLSchemes: [widgetboard]
     dependencies:
       - target: BoardWidget
   BoardWidget:
@@ -34,11 +43,34 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.widgetboard.app.widget
+    entitlements:
+      path: Widget/BoardWidget.entitlements
+      properties:
+        aps-environment: development
+        com.apple.security.application-groups: [group.dev.widgetboard.shared]
+        keychain-access-groups: ["$(AppIdentifierPrefix)dev.widgetboard.shared"]
     info:
       path: Widget/Info.plist
       properties:
         CFBundleDisplayName: Board
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
-        NSAppTransportSecurity:
-          NSAllowsLocalNetworking: true
+        BoardKeychainAccessGroup: "$(AppIdentifierPrefix)dev.widgetboard.shared"
+  WidgetBoardTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: WidgetBoard
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.widgetboard.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  WidgetBoard:
+    build:
+      targets:
+        WidgetBoard: all
+    test:
+      targets: [WidgetBoardTests]

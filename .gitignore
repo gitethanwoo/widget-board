@@ -1,0 +1,37 @@
+# Local credentials, account bindings, and tool state
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+*.p8
+*.p12
+*.pfx
+*.pem
+*.mobileprovision
+*.xcconfig.local
+**/.openai/*
+!**/.openai/hosting.example.json
+.sites/
+.sites-runtime/
+.wrangler/
+.codex/
+.agents/
+
+# Dependencies and generated output
+node_modules/
+build/
+DerivedData/
+dist/
+.next/
+.vinext/
+*.tsbuildinfo
+*.xcresult/
+*.xcarchive/
+*.ipa
+*.log
+.DS_Store
+
+# Personal device evidence and deployment notes stay local
+/docs/native-connect.jpg
+/docs/widget-push-verification.md

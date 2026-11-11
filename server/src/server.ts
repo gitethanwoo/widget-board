@@ -2,13 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import type { Request, Response } from "express";
-import { catalogReference, checkSpec, specSchema } from "./spec.js";
+import { catalogReference, checkSpec, specSchema, widgetWritingGuidance } from "./spec.js";
 import { boardId, getBoard, listBoards, saveBoard } from "./store.js";
 
 const PORT = Number(process.env.PORT ?? 4747);
 
 function buildMcpServer(): McpServer {
-  const server = new McpServer({ name: "widget-board", version: "0.1.0" });
+  const server = new McpServer({ name: "widget-board", version: "0.1.0" }, { instructions: widgetWritingGuidance });
 
   server.registerTool(
     "set_board",
@@ -17,7 +17,7 @@ function buildMcpServer(): McpServer {
       description: [
         "Replace what a home screen widget shows. The widget displaying this board picks up the change on its next refresh (minutes, not seconds).",
         "The spec is a flat json-render tree: `root` names the root element, and `elements` maps keys to { type, props, children }.",
-        "Widgets are small and cannot scroll: a small widget fits about 2 leaf blocks, a medium widget about 4.",
+        "Small widgets show the first leaf; medium adds up to two supporting leaves. Full details remain in the app.",
         "Components:",
         catalogReference(),
       ].join("\n"),
