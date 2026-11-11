@@ -9,31 +9,134 @@
 .preview-sizes{display:flex;gap:4px;margin-bottom:18px}
 .preview-sizes button{border:0;border-radius:7px;padding:7px 13px;background:transparent;color:var(--muted);font-size:12px}
 .preview-sizes button[aria-pressed=true]{background:#e4e8dd;color:var(--ink)}
-.preview-stage{min-height:170px;display:flex;align-items:center}
-.glance-widget{width:170px;height:170px;padding:16px;border-radius:24px;background:#e3e8d5;display:flex;flex-direction:column;gap:8px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;flex-shrink:0}
-.glance-widget.medium{width:358px;max-width:100%}
-.glance-title{font-size:12px;font-weight:600;line-height:1.2;color:#5c6555;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.glance-body{display:flex;align-items:center;gap:16px;flex:1;min-height:0}
-.glance-primary{flex:1;min-width:0}
-.glance-label{font-size:11px;line-height:1.2;color:#5c6555;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.glance-stat strong{display:block;font-size:29px;font-weight:650;letter-spacing:-1px;line-height:1.12;font-variant-numeric:tabular-nums;white-space:nowrap}
-.glance-caption{font-size:11px;line-height:1.25;color:#5c6555;margin:4px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.glance-context{font-size:12px;line-height:1.3;color:#5c6555;margin:9px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.glance-widget .tone-accent strong{color:#007aff}
-.glance-supporting{border-left:1px solid #c6cebb;padding-left:16px;display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
-.glance-supporting .glance-stat strong{font-size:20px;letter-spacing:-.4px}
-.glance-supporting .glance-label{margin-bottom:2px}
-.glance-saved{font-size:11px;line-height:1.2;color:#5c6555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.glance-note{font-size:17px;line-height:1.2;font-weight:500;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
-.glance-note.loud{font-weight:650}.glance-supporting .glance-note{font-size:13px;-webkit-line-clamp:2}
-.glance-widget progress{display:block;width:100%;height:5px;margin:5px 0;accent-color:currentColor}
+/* The widget keeps its real size; a card narrower than a medium widget scrolls it rather than squeezing it. The padding leaves room for the shadow. */
+.preview-stage{min-height:170px;display:flex;align-items:center;overflow-x:auto;padding:6px 8px 28px;margin:-6px -8px -28px}
 .preview-explainer{font-size:12px;line-height:1.5;color:var(--muted);margin:16px 0}
 .canvas-details{margin-top:18px;font-size:13px;color:var(--green)}.canvas-details summary{cursor:pointer;padding:5px 0}
 .canvas-details>div{margin-top:12px;display:grid;gap:20px;border-top:1px solid var(--line);padding-top:18px}
-.canvas-details .glance-label{font-size:13px;white-space:normal}.canvas-details .glance-stat strong{font-size:26px;white-space:normal;overflow-wrap:anywhere}
-.canvas-details .glance-caption,.canvas-details .glance-note{display:block;overflow:visible;white-space:pre-wrap;font-size:13px;line-height:1.5}
-.canvas-details .glance-context{display:block;overflow:visible;white-space:pre-wrap;font-size:13px;line-height:1.5}
-.canvas-details progress{width:100%;height:6px;accent-color:currentColor}
-@media(max-width:800px){.workspace-grid{grid-template-columns:1fr}.preview-stage{min-height:170px}}
+.canvas-details time{font-size:12px;color:var(--muted)}
+@media(max-width:800px){.workspace-grid{grid-template-columns:1fr}}
 
-.glance-primary .glance-label{font-size:12px;margin-bottom:7px}
+/* Widget look: the iOS system appearance in light mode, as in the reviewed mockups. Sizes and layouts are specified in docs/widget-design.md. */
+.wb,.wbd{--w-bg:#fff;--w-ink:#000;--w-sec:rgba(60,60,67,.64);--w-ter:rgba(60,60,67,.34);--w-fill:rgba(120,120,128,.18);--w-sep:rgba(60,60,67,.2);--w-blue:#007aff;--w-green:#34c759;--w-orange:#ff9500;--w-red:#ff3b30;--w-c1:#2a78d6;--w-c2:#eb6834;--w-c3:#1baf7a;--w-c4:#a9acb3;--w-font:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",sans-serif;--w-round:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,sans-serif}
+.wb{width:158px;height:158px;flex:none;padding:16px;border-radius:22px;background:var(--w-bg);color:var(--w-ink);box-shadow:0 1px 2px rgba(20,24,40,.06),0 8px 22px rgba(20,24,40,.1);font-family:var(--w-font);font-size:12px;line-height:1.25;display:flex;flex-direction:column;overflow:hidden;text-align:left}
+.wb--medium{width:338px}
+/* An alert is orange with dark ink, and every tone color gives way to the ink. */
+.wb--alert{--w-bg:#ff9f0a;--w-ink:#1c1c1e;--w-sec:rgba(28,28,30,.78);--w-sep:rgba(28,28,30,.25);--w-blue:var(--w-ink);--w-green:var(--w-ink);--w-orange:var(--w-ink);--w-red:var(--w-ink)}
+:where(.wb,.wbd,.canvas-details) p{margin:0}
+
+/* Structure. A fit column wraps what does not fit into a second column that is clipped away, so optional lines drop whole instead of being cut. */
+.wb-area{position:relative;flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+/* The updated footer sits at the bottom left; the column above it gives up the footer's line and gap, and a right-hand column keeps the full height. */
+.wb-area--foot>.wb-fit,.wb-area--foot>.wb-two>.wb-fit:first-child{padding-bottom:19px}
+.wb-fit{flex:1;min-width:0;min-height:0;display:flex;flex-flow:column wrap;justify-content:center;justify-content:safe center;align-content:flex-start;gap:7px 48px;overflow:hidden}
+.wb-fit>*{width:100%;min-width:0;flex:none}
+.wb-fit--loose{row-gap:11px}
+.wb-two{flex:1;min-width:0;min-height:0;display:flex;gap:16px}
+.wb-rule{width:1px;height:auto;flex:none;align-self:stretch;border:0;margin:0;background:var(--w-sep)}
+.wb-block{display:flex;flex-direction:column;gap:7px;min-width:0}
+.wb-block--loose{gap:11px}
+.wb-center{display:flex;justify-content:center}
+.wb-stack{display:flex;flex-direction:column;gap:3px;min-width:0}
+.wb-stack--dots{gap:5px}
+
+/* Tones. A background needs the extra class to outrank the gray a track or empty cell starts with. */
+.wb-t-ink{color:var(--w-ink)}.wb-t-accent{color:var(--w-blue)}.wb-t-good{color:var(--w-green)}.wb-t-warn{color:var(--w-orange)}.wb-t-bad{color:var(--w-red)}.wb-t-mute{color:var(--w-ter)}.wb-t-neutral{color:var(--w-sec)}
+:is(.wb,.wbd) .wb-bg-ink{background:var(--w-ink)}:is(.wb,.wbd) .wb-bg-accent{background:var(--w-blue)}:is(.wb,.wbd) .wb-bg-good{background:var(--w-green)}:is(.wb,.wbd) .wb-bg-warn{background:var(--w-orange)}:is(.wb,.wbd) .wb-bg-bad{background:var(--w-red)}:is(.wb,.wbd) .wb-bg-mute{background:var(--w-ter)}
+:is(.wb,.wbd) .wb-c1{background:var(--w-c1)}:is(.wb,.wbd) .wb-c2{background:var(--w-c2)}:is(.wb,.wbd) .wb-c3{background:var(--w-c3)}:is(.wb,.wbd) .wb-c4{background:var(--w-c4)}
+
+/* Text roles. */
+.wb-label{font-size:12px;color:var(--w-sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb-label--count{display:flex}.wb-label--count span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}.wb-label--count span:last-child{flex:none;white-space:pre}
+.wb-value{font-family:var(--w-round);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
+.wb-value--lg{font-size:34px;line-height:1.08}.wb-value--md{font-size:26px;line-height:1.1}.wb-value--sm{font-size:19px;line-height:1.15}
+.wb-sub{font-size:12px;line-height:1.3;color:var(--w-sec)}
+.wb-sub--tight,.wb-fit>.wb-stack+.wb-sub{margin-top:-4px}
+.wb-ends{display:flex;justify-content:space-between;gap:8px;font-size:11px;line-height:1.3;color:var(--w-sec);white-space:nowrap}
+.wb-chip{align-self:flex-start;max-width:100%;font-size:11px;line-height:1.3;font-weight:600;border-radius:999px;padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:color-mix(in srgb,currentColor 15%,transparent)}
+.wb-fit>.wb-chip{width:auto}
+.wb-head{display:flex;justify-content:space-between;align-items:baseline;gap:3px;font-size:11px;line-height:1.25;color:var(--w-sec);white-space:nowrap}
+.wb-head span{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.wb-head b{flex:0 0 auto;max-width:60%;overflow:hidden;text-overflow:ellipsis;font-family:var(--w-round);font-weight:600;font-size:15px;color:var(--w-ink)}
+.wb-foot{position:absolute;left:0;bottom:0;white-space:nowrap;font-size:10px;line-height:1.2;color:var(--w-sec);letter-spacing:.01em}
+.wb-note{font-size:16px;line-height:1.22;font-weight:500;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+.wb-note--loud{font-family:var(--w-round);font-size:21px;line-height:1.14;font-weight:700;letter-spacing:-.01em}
+.wb-note--wide{font-size:27px}
+.wb-note-sup{font-size:12px;line-height:1.3;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+
+/* A chart or bar under a headline value needs more air than text does. */
+.wb-stack+.wb-bar,.wb-stack+.wb-steps,.wb-stack+.wb-split{margin-top:5px}
+.wb-stack+.wb-spark,.wb-stack+.wb-cols{margin-top:8px}
+.wb-stack+.wb-dots{margin-top:4px}
+.wb-head+.wb-grid{margin-top:3px}
+
+/* Bars and lists. */
+.wb-bar{position:relative;height:6px;border-radius:3px;background:var(--w-fill)}
+.wb-bar i{display:block;height:100%;border-radius:3px}
+.wb-bar b{position:absolute;top:-4px;width:2px;height:14px;border-radius:1px;background:var(--w-ink);transform:translateX(-1px);box-shadow:0 0 0 2px var(--w-bg)}
+.wb-hbar{display:flex;flex-direction:column;gap:4px;min-width:0}
+.wb-hbar p{display:flex;justify-content:space-between;gap:6px;font-size:11px;line-height:1.2}
+.wb-hbar p span:first-child{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb-hbar p span:last-child{flex:none;color:var(--w-sec);white-space:nowrap;font-variant-numeric:tabular-nums}
+.wb-row{display:flex;align-items:center;gap:6px;font-size:12px;line-height:1.3;min-width:0}
+.wb-row--list{margin-top:2px}
+.wb-row--legend+.wb-row--legend{margin-top:-3px}
+.wb-row--dense+.wb-row--dense{margin-top:-2px}
+/* Only one end of a row gives way, so the other is never cut by a fraction of a point: the name in a narrow row, the detail that ends the value in a full-width one. */
+.wb-row-k{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb-row-v{flex:0 0 auto;max-width:60%;margin-left:auto;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.wb-row--wide .wb-row-k{flex:0 0 auto;max-width:45%}
+.wb-row--wide .wb-row-v{flex:0 1 auto;min-width:0;max-width:none}
+.wb-row-v--soft{font-weight:400;color:var(--w-sec)}
+.wb-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.wb-swatch{width:8px;height:8px;border-radius:2px;flex:none}
+.wb-icon{display:inline-flex;flex:none;border-radius:50%;background:color-mix(in srgb,currentColor 17%,transparent)}
+.wb-icon--hollow{background:transparent;box-shadow:inset 0 0 0 1.5px var(--w-ter)}
+.wb-check,.wb-agenda{display:flex;font-size:12.5px;line-height:1.25;min-width:0;margin-top:1px}
+.wb-check{align-items:center;gap:7px}
+.wb-check span:last-child,.wb-agenda span:last-child{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb-check--done span:last-child{color:var(--w-sec);text-decoration:line-through}
+.wb-check--more{margin-top:-3px}
+.wb-agenda{align-items:baseline;gap:8px}
+.wb-agenda-time{flex:none;width:34px;font-size:11px;color:var(--w-sec);font-variant-numeric:tabular-nums}
+
+/* Charts. */
+.wb-ring{position:relative;flex:none}
+.wb-ring svg{display:block}
+.wb-ring span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--w-round);font-weight:600;font-size:19px;color:var(--w-ink)}
+.wb-spark{display:block;flex:none;max-width:100%}
+.wb-cols{display:flex;gap:4px;align-items:stretch}
+.wb-cols span{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+.wb-cols b{flex:1;min-height:0;display:flex;align-items:flex-end}
+.wb-cols i{display:block;width:100%;border-radius:3px 3px 1px 1px;background:var(--w-ter)}
+.wb-cols i.wb-cols-nil{height:3px;border-radius:1.5px;background:var(--w-fill)}
+.wb-cols em,.wb-dots em{font-style:normal;font-size:9px;line-height:1;text-align:center;color:var(--w-sec)}
+.wb-dots{display:flex;gap:4px}
+.wb-dots span{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wb-dots i{width:14px;height:14px;border-radius:50%;background:var(--w-fill)}
+.wb-dots i.wb-dots-today{background:transparent;box-shadow:inset 0 0 0 1.5px var(--w-sec)}
+.wb-dots--sm{gap:3px}.wb-dots--sm i{width:10px;height:10px}
+.wb-steps{display:flex;gap:3px}
+.wb-steps i{flex:1;height:6px;border-radius:3px;background:var(--w-fill)}
+.wb-steps i.wb-steps-done{background:color-mix(in srgb,var(--w-blue) 42%,transparent)}.wb-steps i.wb-steps-current{background:var(--w-blue)}
+.wb-split{display:flex;gap:2px;height:10px}
+.wb-split i{flex:0 1 0;min-width:3px;border-radius:2px}
+.wb-split i:first-child{border-radius:5px 2px 2px 5px}.wb-split i:last-child{border-radius:2px 5px 5px 2px}
+.wb-grid{display:grid;gap:3px;justify-content:start}
+.wb-grid i{border-radius:4px;background:var(--w-fill)}
+.wb-grid i.wb-grid-blank{background:transparent}
+
+/* The details disclosure shows every leaf in full, on the page's own paper and ink, with nothing shortened. */
+.wbd{--w-bg:var(--paper);--w-ink:var(--ink);--w-sec:var(--muted);display:flex;flex-direction:column;gap:8px;max-width:340px;color:var(--ink);font-size:13px;line-height:1.5}
+.wbd-title{font-size:15px;font-weight:600;color:var(--ink)}
+.wbd-label{color:var(--muted)}
+.wbd-value{font-size:26px;line-height:1.15;font-weight:650;overflow-wrap:anywhere}
+.wbd-text,.wbd-note{white-space:pre-wrap;overflow-wrap:anywhere}
+.wbd-note{font-size:15px;line-height:1.4}.wbd-note--loud{font-size:19px;line-height:1.25;font-weight:650}
+.wbd-status{display:flex;align-items:center;gap:8px;font-weight:600}
+.wbd .wb-row,.wbd .wb-check,.wbd .wb-agenda,.wbd .wb-hbar p,.wbd .wb-ends{font-size:13px;margin-top:0}
+.wbd .wb-row-k,.wbd .wb-row-v,.wbd .wb-hbar p span,.wbd .wb-check span:last-child,.wbd .wb-agenda span:last-child,.wbd .wb-ends{white-space:normal;overflow:visible;overflow-wrap:anywhere}
+.wbd .wb-row-k,.wbd .wb-row-v{max-width:none;flex:1 1 auto;min-width:0}.wbd .wb-row-v{text-align:right}
+.wbd .wb-agenda-time{width:44px;font-size:13px}
+.wbd .wb-chip{font-size:12px}
+.wbd .wb-spark{height:auto}
