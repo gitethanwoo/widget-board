@@ -394,7 +394,7 @@ export const examples: Example[] = [
     spec: board({
       refactor: {
         type: "Progress",
-        props: { label: "Refactor auth", value: 0.72, supportingText: "Step 5 of 7 · running tests", caption: null, tone: "accent" },
+        props: { label: "Refactor auth", value: 0.72, supportingText: "Running tests", trailingText: "5 of 7", caption: null, tone: "accent" },
         children: [],
       },
       running: stat("Running for", "14 min"),

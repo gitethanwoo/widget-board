@@ -1039,7 +1039,8 @@
      "props": {
       "label": "Refactor auth",
       "value": 0.72,
-      "supportingText": "Step 5 of 7 · running tests",
+      "supportingText": "Running tests",
+      "trailingText": "5 of 7",
       "caption": null,
       "tone": "accent"
      },
