@@ -9,13 +9,21 @@ struct BoardContent {
     }
 
     let title: String?
+    /// The agent asked for the whole widget to be painted as an alert.
+    let alert: Bool
+    /// The agent asked for an "Updated" footer drawn from the save time.
+    let showUpdated: Bool
     let blocks: [Block]
 
     init(spec: BoardSpec) {
         if case .board(let props) = spec.elements[spec.root]?.kind {
             title = props.title
+            alert = props.alert ?? false
+            showUpdated = props.showUpdated ?? false
         } else {
             title = nil
+            alert = false
+            showUpdated = false
         }
         var result: [Block] = []
         var visited = Set<String>()
@@ -25,16 +33,18 @@ struct BoardContent {
             switch element.kind {
             case .board, .row:
                 for child in element.children { visit(child, depth: depth + 1) }
-            case .stat, .progress, .note:
-                result.append(Block(id: key, element: element))
             case .unknown:
                 break
+            case .stat, .progress, .ring, .trend, .columns, .barList, .split, .rows,
+                 .agenda, .dots, .grid, .checklist, .steps, .note:
+                result.append(Block(id: key, element: element))
             }
         }
         visit(spec.root, depth: 0)
         blocks = result
     }
 
+    /// Small shows the first leaf. Medium adds at most the next two.
     func summary(includingSupportingDetails: Bool) -> [Block] {
         Array(blocks.prefix(includingSupportingDetails ? 3 : 1))
     }

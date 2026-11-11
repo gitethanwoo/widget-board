@@ -42,7 +42,13 @@ struct BoardProvider: AppIntentTimelineProvider {
 
 struct BoardWidgetView: View {
     @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetRenderingMode) private var renderingMode
     let entry: BoardEntry
+
+    private var board: Board? {
+        if case .board(let board) = entry.content { return board }
+        return nil
+    }
 
     var body: some View {
         Group {
@@ -65,7 +71,11 @@ struct BoardWidgetView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
         }
-        .containerBackground(.background, for: .widget)
+        // An alert board is orange in full color only. Tinted and clear Home
+        // Screens remove this background, so the words carry the message there.
+        .containerBackground(for: .widget) {
+            BoardBackground(board: board, fullColor: renderingMode == .fullColor)
+        }
         .widgetURL(URL(string: "widgetboard://open"))
     }
 }
