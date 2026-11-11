@@ -1,0 +1,1442 @@
+[
+ {
+  "id": "number-comparison",
+  "name": "Number with a comparison",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "week",
+      "groceries",
+      "dining"
+     ]
+    },
+    "week": {
+     "type": "Stat",
+     "props": {
+      "label": "This week",
+      "value": "$312.50",
+      "supportingText": "Down 18% from last week",
+      "caption": null,
+      "tone": "accent"
+     },
+     "children": []
+    },
+    "groceries": {
+     "type": "Stat",
+     "props": {
+      "label": "Groceries",
+      "value": "$142.10",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "dining": {
+     "type": "Stat",
+     "props": {
+      "label": "Dining out",
+      "value": "$86.40",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "number-delta",
+  "name": "Number with a change chip",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "week",
+      "last",
+      "average"
+     ]
+    },
+    "week": {
+     "type": "Stat",
+     "props": {
+      "label": "This week",
+      "value": "$312.50",
+      "change": {
+       "direction": "down",
+       "text": "18% vs last week",
+       "sentiment": "good"
+      },
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "last": {
+     "type": "Stat",
+     "props": {
+      "label": "Last week",
+      "value": "$381.20",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "average": {
+     "type": "Stat",
+     "props": {
+      "label": "4-week average",
+      "value": "$356.00",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "number-sparkline",
+  "name": "Number with a sparkline",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "checking"
+     ]
+    },
+    "checking": {
+     "type": "Trend",
+     "props": {
+      "label": "Checking · 14 days",
+      "value": "$4,218",
+      "points": [
+       3100,
+       3050,
+       2980,
+       2904,
+       5350,
+       5200,
+       5010,
+       4890,
+       4700,
+       4650,
+       4480,
+       4400,
+       4290,
+       4218
+      ],
+      "supportingText": "Low of $2,904 on Oct 30",
+      "tone": "accent"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "remaining-bar",
+  "name": "What's left, with a bar",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "left",
+      "budgets"
+     ]
+    },
+    "left": {
+     "type": "Progress",
+     "props": {
+      "label": "Left this month",
+      "value": 0.31,
+      "display": "$1,240",
+      "supportingText": "of $4,000",
+      "trailingText": "10 days left",
+      "caption": null,
+      "tone": "good"
+     },
+     "children": []
+    },
+    "budgets": {
+     "type": "BarList",
+     "props": {
+      "label": null,
+      "items": [
+       {
+        "label": "Groceries",
+        "value": "$214 left",
+        "fraction": 0.69,
+        "tone": "accent"
+       },
+       {
+        "label": "Dining out",
+        "value": "$82 left",
+        "fraction": 0.8,
+        "tone": "warn"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "budget-pace",
+  "name": "Ahead or behind pace",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "dining",
+      "spent",
+      "pace"
+     ]
+    },
+    "dining": {
+     "type": "Progress",
+     "props": {
+      "label": "Dining out · Nov",
+      "value": 0.795,
+      "display": "$51 over",
+      "marker": 0.667,
+      "supportingText": "Day 20 of 30. The mark shows even pace.",
+      "caption": null,
+      "tone": "warn"
+     },
+     "children": []
+    },
+    "spent": {
+     "type": "Stat",
+     "props": {
+      "label": "Spent",
+      "value": "$318 of $400",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "pace": {
+     "type": "Stat",
+     "props": {
+      "label": "Even pace",
+      "value": "$267",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "ring",
+  "name": "Ring",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "fund",
+      "detail"
+     ]
+    },
+    "fund": {
+     "type": "Ring",
+     "props": {
+      "label": "Emergency fund",
+      "value": 0.62,
+      "supportingText": "$9,300 of $15,000",
+      "tone": "accent"
+     },
+     "children": []
+    },
+    "detail": {
+     "type": "Rows",
+     "props": {
+      "label": null,
+      "marker": "none",
+      "items": [
+       {
+        "label": "Saved",
+        "value": "$9,300",
+        "tone": "default"
+       },
+       {
+        "label": "To go",
+        "value": "$5,700",
+        "tone": "default"
+       },
+       {
+        "label": "At this rate",
+        "value": "June",
+        "tone": "default"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "category-bars",
+  "name": "Category bars",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "budgets"
+     ]
+    },
+    "budgets": {
+     "type": "BarList",
+     "props": {
+      "label": "Budgets · November",
+      "items": [
+       {
+        "label": "Groceries",
+        "value": "$214 left",
+        "fraction": 0.69,
+        "tone": "accent"
+       },
+       {
+        "label": "Dining out",
+        "value": "$82 left",
+        "fraction": 0.8,
+        "tone": "warn"
+       },
+       {
+        "label": "Gas",
+        "value": "$148 left",
+        "fraction": 0.38,
+        "tone": "accent"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "split-bar",
+  "name": "Where it went",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "spent"
+     ]
+    },
+    "spent": {
+     "type": "Split",
+     "props": {
+      "label": "Spent this month",
+      "value": "$2,760",
+      "segments": [
+       {
+        "label": "Food",
+        "value": "$883",
+        "share": 32
+       },
+       {
+        "label": "Kids",
+        "value": "$745",
+        "share": 27
+       },
+       {
+        "label": "Car",
+        "value": "$497",
+        "share": 18
+       },
+       {
+        "label": "Other",
+        "value": "$635",
+        "share": 23
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "week-bars",
+  "name": "The week in bars",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "today"
+     ]
+    },
+    "today": {
+     "type": "Columns",
+     "props": {
+      "label": "Spent today",
+      "value": "$46",
+      "supportingText": "Week so far $312.50",
+      "columns": [
+       {
+        "label": "M",
+        "value": 64
+       },
+       {
+        "label": "T",
+        "value": 121
+       },
+       {
+        "label": "W",
+        "value": 81.5
+       },
+       {
+        "label": "T",
+        "value": 46
+       },
+       {
+        "label": "F",
+        "value": null
+       },
+       {
+        "label": "S",
+        "value": null
+       },
+       {
+        "label": "S",
+        "value": null
+       }
+      ],
+      "highlight": 3
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "rows",
+  "name": "Short list of figures",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "accounts"
+     ]
+    },
+    "accounts": {
+     "type": "Rows",
+     "props": {
+      "label": "Accounts",
+      "marker": "none",
+      "items": [
+       {
+        "label": "Checking",
+        "value": "$4,218",
+        "tone": "default"
+       },
+       {
+        "label": "Savings",
+        "value": "$9,300",
+        "tone": "default"
+       },
+       {
+        "label": "Credit card",
+        "value": "−$1,120",
+        "tone": "bad"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "countdown",
+  "name": "Countdown",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "rent",
+      "daycare",
+      "insurance"
+     ]
+    },
+    "rent": {
+     "type": "Stat",
+     "props": {
+      "label": "Rent due",
+      "value": "21 days",
+      "supportingText": "Dec 1 · $2,150",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "daycare": {
+     "type": "Stat",
+     "props": {
+      "label": "Daycare",
+      "value": "3 days",
+      "caption": null,
+      "tone": "warn"
+     },
+     "children": []
+    },
+    "insurance": {
+     "type": "Stat",
+     "props": {
+      "label": "Car insurance",
+      "value": "19 days",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "next-up",
+  "name": "Next up",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "next",
+      "later"
+     ]
+    },
+    "next": {
+     "type": "Stat",
+     "props": {
+      "label": "Next",
+      "value": "3:30 PM",
+      "supportingText": "Pediatrician. Leave by 2:50.",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "later": {
+     "type": "Agenda",
+     "props": {
+      "label": "Later",
+      "items": [
+       {
+        "time": "5:30",
+        "text": "Soccer pickup"
+       },
+       {
+        "time": "7:00",
+        "text": "Dinner out"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "agenda",
+  "name": "Agenda",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "today",
+      "tomorrow"
+     ]
+    },
+    "today": {
+     "type": "Agenda",
+     "props": {
+      "label": "Today",
+      "items": [
+       {
+        "time": "3:30",
+        "text": "Pediatrician"
+       },
+       {
+        "time": "5:30",
+        "text": "Soccer pickup"
+       },
+       {
+        "time": "7:00",
+        "text": "Dinner out"
+       }
+      ]
+     },
+     "children": []
+    },
+    "tomorrow": {
+     "type": "Agenda",
+     "props": {
+      "label": "Tomorrow",
+      "items": [
+       {
+        "time": "8:00",
+        "text": "Car to the shop"
+       },
+       {
+        "time": "12:15",
+        "text": "Team lunch"
+       },
+       {
+        "time": "6:00",
+        "text": "School concert"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "habit-week",
+  "name": "Habit week",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "workouts",
+      "reading",
+      "bedtime"
+     ]
+    },
+    "workouts": {
+     "type": "Dots",
+     "props": {
+      "label": "Workouts this week",
+      "value": "3 of 5",
+      "days": [
+       {
+        "label": "M",
+        "state": "done"
+       },
+       {
+        "label": "T",
+        "state": "missed"
+       },
+       {
+        "label": "W",
+        "state": "done"
+       },
+       {
+        "label": "T",
+        "state": "today"
+       },
+       {
+        "label": "F",
+        "state": "upcoming"
+       },
+       {
+        "label": "S",
+        "state": "upcoming"
+       },
+       {
+        "label": "S",
+        "state": "upcoming"
+       }
+      ],
+      "tone": "good"
+     },
+     "children": []
+    },
+    "reading": {
+     "type": "Dots",
+     "props": {
+      "label": "Reading",
+      "value": "3 days",
+      "days": [
+       {
+        "label": "M",
+        "state": "done"
+       },
+       {
+        "label": "T",
+        "state": "done"
+       },
+       {
+        "label": "W",
+        "state": "done"
+       },
+       {
+        "label": "T",
+        "state": "today"
+       },
+       {
+        "label": "F",
+        "state": "upcoming"
+       },
+       {
+        "label": "S",
+        "state": "upcoming"
+       },
+       {
+        "label": "S",
+        "state": "upcoming"
+       }
+      ],
+      "tone": "accent"
+     },
+     "children": []
+    },
+    "bedtime": {
+     "type": "Dots",
+     "props": {
+      "label": "In bed by 11",
+      "value": "1 night",
+      "days": [
+       {
+        "label": "M",
+        "state": "missed"
+       },
+       {
+        "label": "T",
+        "state": "done"
+       },
+       {
+        "label": "W",
+        "state": "missed"
+       },
+       {
+        "label": "T",
+        "state": "today"
+       },
+       {
+        "label": "F",
+        "state": "upcoming"
+       },
+       {
+        "label": "S",
+        "state": "upcoming"
+       },
+       {
+        "label": "S",
+        "state": "upcoming"
+       }
+      ],
+      "tone": "accent"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "month-grid",
+  "name": "Month grid",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "nospend"
+     ]
+    },
+    "nospend": {
+     "type": "Grid",
+     "props": {
+      "label": "No-spend days · Oct",
+      "value": "11",
+      "supportingText": "Best month this year.",
+      "offset": 4,
+      "days": [
+       false,
+       true,
+       false,
+       false,
+       true,
+       false,
+       false,
+       true,
+       false,
+       false,
+       true,
+       false,
+       false,
+       true,
+       true,
+       false,
+       false,
+       false,
+       false,
+       true,
+       false,
+       true,
+       false,
+       true,
+       false,
+       true,
+       false,
+       false,
+       true,
+       false,
+       false
+      ],
+      "tone": "good"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "loud-reminder",
+  "name": "Loud reminder",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "trash"
+     ]
+    },
+    "trash": {
+     "type": "Note",
+     "props": {
+      "text": "Trash goes out tonight",
+      "loud": true,
+      "supportingText": "Recycling too. Bins at the curb by 7 AM."
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "note-from",
+  "name": "Note from a person",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "note"
+     ]
+    },
+    "note": {
+     "type": "Note",
+     "props": {
+      "text": "Can you grab milk on the way home?",
+      "loud": false,
+      "byline": "Jamie · 2:14 PM"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "checklist",
+  "name": "Checklist",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "leaving"
+     ]
+    },
+    "leaving": {
+     "type": "Checklist",
+     "props": {
+      "label": "Before we go",
+      "items": [
+       {
+        "text": "Set thermostat",
+        "done": false
+       },
+       {
+        "text": "Trash out",
+        "done": false
+       },
+       {
+        "text": "Passports",
+        "done": true
+       },
+       {
+        "text": "Dog to the kennel",
+        "done": true
+       },
+       {
+        "text": "Hold the mail",
+        "done": true
+       },
+       {
+        "text": "Water the plants",
+        "done": true
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "answer",
+  "name": "A question and its answer",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "denver",
+      "flights",
+      "hotel"
+     ]
+    },
+    "denver": {
+     "type": "Stat",
+     "props": {
+      "label": "Can we do Denver?",
+      "value": "Yes",
+      "supportingText": "$640 to spare after flights and hotel",
+      "caption": null,
+      "tone": "good"
+     },
+     "children": []
+    },
+    "flights": {
+     "type": "Stat",
+     "props": {
+      "label": "Flights",
+      "value": "$412",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "hotel": {
+     "type": "Stat",
+     "props": {
+      "label": "Hotel, 3 nights",
+      "value": "$520",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "agent-progress",
+  "name": "Progress bar",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "refactor",
+      "running",
+      "files"
+     ]
+    },
+    "refactor": {
+     "type": "Progress",
+     "props": {
+      "label": "Refactor auth",
+      "value": 0.72,
+      "supportingText": "Step 5 of 7 · running tests",
+      "caption": null,
+      "tone": "accent"
+     },
+     "children": []
+    },
+    "running": {
+     "type": "Stat",
+     "props": {
+      "label": "Running for",
+      "value": "14 min",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "files": {
+     "type": "Stat",
+     "props": {
+      "label": "Files changed",
+      "value": "23",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "steps",
+  "name": "Step tracker",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "pairing"
+     ]
+    },
+    "pairing": {
+     "type": "Steps",
+     "props": {
+      "label": "Pairing flow",
+      "steps": [
+       "Plan",
+       "Build",
+       "Testing",
+       "Ship"
+      ],
+      "current": 2,
+      "supportingText": "14 min in"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "agents",
+  "name": "Several agents",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "agents"
+     ]
+    },
+    "agents": {
+     "type": "Rows",
+     "props": {
+      "label": "Agents",
+      "marker": "dot",
+      "items": [
+       {
+        "label": "Deploy",
+        "value": "Needs you",
+        "detail": "approve the migration",
+        "tone": "warn"
+       },
+       {
+        "label": "Refactor",
+        "value": "12 min",
+        "detail": "running tests",
+        "tone": "accent"
+       },
+       {
+        "label": "Docs",
+        "value": "Done",
+        "detail": "ready to review",
+        "tone": "good"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "outcome",
+  "name": "Finished",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "result",
+      "tests",
+      "took"
+     ]
+    },
+    "result": {
+     "type": "Note",
+     "props": {
+      "text": "Auth refactor is ready to review",
+      "loud": false,
+      "status": "done",
+      "supportingText": "148 tests pass"
+     },
+     "children": []
+    },
+    "tests": {
+     "type": "Stat",
+     "props": {
+      "label": "Tests",
+      "value": "148 pass",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "took": {
+     "type": "Stat",
+     "props": {
+      "label": "Took",
+      "value": "26 min",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "needs-you",
+  "name": "Needs you",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null,
+      "alert": true
+     },
+     "children": [
+      "deploy",
+      "waiting",
+      "blocked"
+     ]
+    },
+    "deploy": {
+     "type": "Stat",
+     "props": {
+      "label": "Deploy agent",
+      "value": "Needs you",
+      "supportingText": "Approve the migration to continue.",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "waiting": {
+     "type": "Stat",
+     "props": {
+      "label": "Waiting",
+      "value": "6 min",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "blocked": {
+     "type": "Stat",
+     "props": {
+      "label": "Blocked step",
+      "value": "4 of 6",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "all-clear",
+  "name": "All clear",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null,
+      "showUpdated": true
+     },
+     "children": [
+      "status",
+      "checks"
+     ]
+    },
+    "status": {
+     "type": "Stat",
+     "props": {
+      "label": "",
+      "value": "All clear",
+      "supportingText": "No bills due this week",
+      "caption": null,
+      "tone": "good"
+     },
+     "children": []
+    },
+    "checks": {
+     "type": "Rows",
+     "props": {
+      "label": null,
+      "marker": "icon",
+      "items": [
+       {
+        "label": "Balances",
+        "value": "Normal",
+        "tone": "good"
+       },
+       {
+        "label": "Renewals",
+        "value": "None",
+        "tone": "good"
+       },
+       {
+        "label": "Cards",
+        "value": "Paid",
+        "tone": "good"
+       }
+      ]
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "threshold",
+  "name": "Line crossed",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "checking",
+      "savings",
+      "short"
+     ]
+    },
+    "checking": {
+     "type": "Stat",
+     "props": {
+      "label": "Checking is low",
+      "value": "$312",
+      "supportingText": "Rent of $2,150 is due in 3 days",
+      "caption": null,
+      "tone": "bad"
+     },
+     "children": []
+    },
+    "savings": {
+     "type": "Stat",
+     "props": {
+      "label": "Savings",
+      "value": "$9,300",
+      "caption": null,
+      "tone": "default"
+     },
+     "children": []
+    },
+    "short": {
+     "type": "Stat",
+     "props": {
+      "label": "Short by",
+      "value": "$1,838",
+      "caption": null,
+      "tone": "bad"
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "compare",
+  "name": "This period against last",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "groceries"
+     ]
+    },
+    "groceries": {
+     "type": "BarList",
+     "props": {
+      "label": "Groceries to day 20",
+      "items": [
+       {
+        "label": "November",
+        "value": "$486",
+        "fraction": 0.79,
+        "tone": "accent"
+       },
+       {
+        "label": "October",
+        "value": "$612",
+        "fraction": 1,
+        "tone": "default"
+       }
+      ],
+      "change": {
+       "direction": "down",
+       "text": "21% vs October",
+       "sentiment": "good"
+      }
+     },
+     "children": []
+    }
+   }
+  }
+ },
+ {
+  "id": "goal-line",
+  "name": "Progress toward a goal",
+  "spec": {
+   "root": "board",
+   "elements": {
+    "board": {
+     "type": "Board",
+     "props": {
+      "title": null
+     },
+     "children": [
+      "fund"
+     ]
+    },
+    "fund": {
+     "type": "Trend",
+     "props": {
+      "label": "Emergency fund",
+      "value": "$9,300",
+      "points": [
+       6200,
+       6600,
+       7000,
+       7400,
+       7900,
+       8300,
+       8800,
+       9300
+      ],
+      "goal": 15000,
+      "supportingText": "Goal is $15,000. Up $3,100 since April.",
+      "tone": "accent"
+     },
+     "children": []
+    }
+   }
+  }
+ }
+]

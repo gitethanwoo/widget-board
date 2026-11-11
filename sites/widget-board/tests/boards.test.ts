@@ -35,16 +35,20 @@ test("discovery exposes only get and set for one canvas, strict schemas, and rea
   const legacy: any = await (await handleMcp(mcpRequest("initialize", { protocolVersion: "2025-06-18" }), store)).json();
   assert.equal(legacy.result.protocolVersion, "2025-06-18");
   const list: any = await (await handleMcp(mcpRequest("tools/list"), store)).json();
-  assert.deepEqual(list.result.tools.map((t: { name: string }) => t.name), ["get_board", "set_board"]);
-  assert.equal(list.result.tools[1].inputSchema.additionalProperties, false);
-  assert.equal(list.result.tools[0].annotations.readOnlyHint, true);
-  assert.deepEqual(list.result.tools[0].inputSchema.properties, {});
-  assert.deepEqual(Object.keys(list.result.tools[1].inputSchema.properties), ["spec"]);
+  assert.deepEqual(list.result.tools.map((t: { name: string }) => t.name), ["get_examples", "get_board", "set_board"]);
+  const [examples, get, set] = list.result.tools;
+  assert.equal(set.inputSchema.additionalProperties, false);
+  assert.equal(set.annotations.readOnlyHint, false);
+  for (const reader of [examples, get]) {
+    assert.equal(reader.annotations.readOnlyHint, true);
+    assert.deepEqual(reader.inputSchema.properties, {});
+  }
+  assert.deepEqual(Object.keys(set.inputSchema.properties), ["spec"]);
 });
 
 test("anonymous calls cannot read or write and never reach storage", async () => {
   const store = new Proxy({} as BoardRepository, { get() { throw new Error("Storage must not be touched"); } });
-  for (const name of ["list_boards", "get_board", "set_board"]) {
+  for (const name of ["list_boards", "get_board", "set_board", "get_examples"]) {
     assert.equal((await call(store, undefined, name, { board: "note", spec })).status, 401);
   }
   for (const method of ["GET", "PUT"]) {

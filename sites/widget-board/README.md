@@ -3,7 +3,7 @@
 Private remote MCP and board storage for the native Widget Board prototype.
 
 - `/mcp`: stateless MCP JSON-RPC. Supports Sites discovery (`2026-07-28`) and legacy initialization (`2025-11-25`, `2025-06-18`, `2025-03-26`).
-- Tools: `get_board` and `set_board`, for one canvas per account.
+- Tools: `get_examples`, `get_board` and `set_board`, for one canvas per account. `get_examples` returns the approved designs as complete specs for an agent to adapt; it reads no user data.
 - `GET /boards`: list the signed-in user's boards.
 - `GET /boards/:id`: read `{ id, spec, updatedAt }`, matching the Swift model.
 - `PUT /boards/:id`: validate and replace a board with `{ spec }`.

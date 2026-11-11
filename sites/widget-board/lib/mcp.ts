@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { catalogReference, specSchema, widgetWritingGuidance } from "./catalog/spec.ts";
+import { examplesReference, examplesUsing } from "./catalog/examples.ts";
 import { authenticatedOwner, boardId, currentBoardId, checkWriteOrigin, errorText, json, readJson, validateBoardSpec, type BoardRepository } from "./boards.ts";
 
 const setInput = z.strictObject({ spec: specSchema });
@@ -11,14 +12,32 @@ const emptyInput = z.strictObject({});
 const schema = (value: z.ZodType) => z.toJSONSchema(value, { target: "draft-7" });
 const annotations = (readOnly: boolean) => ({ readOnlyHint: readOnly, destructiveHint: !readOnly, idempotentHint: true, openWorldHint: false });
 const tools = [
+  { name: "get_examples", title: "Get board design examples", description: "Call this before set_board. Returns the approved board designs, each with the question it answers, when to use it, when not to, and a complete valid spec to adapt. Choose the design that matches the user's question, then replace the sample data with verified data. Takes no arguments and reads no user data.", inputSchema: schema(emptyInput), annotations: annotations(true) },
   { name: "get_board", title: "Get widget board", description: "Read the single canvas shown on your iPhone before changing its content. There are no board names or destinations to choose.", inputSchema: schema(emptyInput), annotations: annotations(true) },
   { name: "set_board", title: "Set widget board", description: [
-    "Replace the signed-in user's single canvas. This is always the content shown on their iPhone widgets. Read get_board first when preserving other content. No board name is needed.",
+    "Replace the signed-in user's single canvas. This is always the content shown on their iPhone widgets. Call get_examples first and adapt the design that answers the user's question. Read get_board first when preserving other content. No board name is needed.",
     "Saving sends a silent WidgetKit push to connected iPhones. The native app must be paired and push configured. The response's push field reports accepted, partial, failed, not_configured, or no_devices; accepted means APNs accepted the request, not proof the screen refreshed. iOS controls delivery; polling is the fallback.",
-    "Use a flat json-render tree: root names the Board element; elements maps keys to {type, props, children}. Small widgets show the first leaf, including a Stat's optional supportingText below its value. Medium widgets add at most two supporting leaves. Full details are available in the app. Use at most 64 elements and 8 levels. No cycles, shared children, or unused elements.",
+    "Use a flat json-render tree: root names the Board element; elements maps keys to {type, props, children}. Small widgets show the first leaf whole, including its chart, bar or list. Medium widgets add at most two supporting leaves beside it. Full details are available in the app. Use at most 64 elements and 8 levels. No cycles, shared children, or unused elements.",
     catalogReference(),
   ].join("\n"), inputSchema: schema(setInput), annotations: annotations(false) },
 ];
+
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+
+/** Point a rejected spec at working examples of the components its problems name. */
+function exampleHint(args: unknown, problems: string): string {
+  const spec = isRecord(args) ? args.spec : undefined;
+  const elements = isRecord(spec) && isRecord(spec.elements) ? spec.elements : {};
+  const hints = new Map<string, string[]>();
+  for (const [key, element] of Object.entries(elements)) {
+    if (!isRecord(element) || typeof element.type !== "string") continue;
+    if (!problems.includes(`elements.${key}.`) && !problems.includes(`"${key}"`)) continue;
+    const ids = examplesUsing(element.type);
+    if (ids.length > 0) hints.set(element.type, ids.slice(0, 3));
+  }
+  if (hints.size === 0) return "Call get_examples for complete valid specs.";
+  return `Call get_examples for a working ${[...hints].map(([type, ids]) => `${type} (${ids.join(", ")})`).join("; ")}.`;
+}
 
 const envelope = z.object({ jsonrpc: z.literal("2.0"), id: z.union([z.string(), z.number(), z.null()]).optional(), method: z.string(), params: z.record(z.string(), z.unknown()).optional() });
 const versions = ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"];
@@ -46,13 +65,17 @@ export async function handleMcp(request: Request, repository: BoardRepository): 
   if (name !== "list_boards" && !tools.some(tool => tool.name === name)) return failure(-32602, "Unknown tool.");
   let args;
   try {
-    if (name === "list_boards") args = emptyInput.parse(params?.arguments ?? {});
+    if (name === "list_boards" || name === "get_examples") args = emptyInput.parse(params?.arguments ?? {});
     else if (name === "get_board") args = legacyGetInput.parse(params?.arguments ?? {});
     else { const input = legacySetInput.parse(params?.arguments); args = { ...input, spec: validateBoardSpec(input.spec) }; }
-  } catch (error) { return result({ isError: true, content: [{ type: "text", text: errorText(error) }] }); }
+  } catch (error) {
+    const text = errorText(error);
+    return result({ isError: true, content: [{ type: "text", text: name === "set_board" ? `${text}\n${exampleHint(params?.arguments, text)}` : text }] });
+  }
   try {
     let value: unknown;
-    if (name === "list_boards") {
+    if (name === "get_examples") value = examplesReference();
+    else if (name === "list_boards") {
       const board = await repository.get(owner, currentBoardId);
       value = { boards: board ? [board] : [] };
     }
