@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import type { Request, Response } from "express";
+import { examplesReference } from "./examples.js";
 import { catalogReference, checkSpec, specSchema, widgetWritingGuidance } from "./spec.js";
 import { boardId, getBoard, listBoards, saveBoard } from "./store.js";
 
@@ -17,8 +18,8 @@ function buildMcpServer(): McpServer {
       description: [
         "Replace what a home screen widget shows. The widget displaying this board picks up the change on its next refresh (minutes, not seconds).",
         "The spec is a flat json-render tree: `root` names the root element, and `elements` maps keys to { type, props, children }.",
-        "Small widgets show the first leaf; medium adds up to two supporting leaves. Full details remain in the app.",
-        "Components:",
+        "Small widgets show the first leaf whole; medium adds up to two supporting leaves. Full details remain in the app.",
+        "Call get_examples first and adapt the design that answers the user's question.",
         catalogReference(),
       ].join("\n"),
       inputSchema: {
@@ -39,6 +40,17 @@ function buildMcpServer(): McpServer {
         content: [{ type: "text", text: `Board "${saved.id}" updated at ${saved.updatedAt}.` }],
       };
     },
+  );
+
+  server.registerTool(
+    "get_examples",
+    {
+      title: "Get board design examples",
+      description:
+        "Call this before set_board. Returns the approved board designs, each with the question it answers, when to use it, when not to, and a complete valid spec to adapt.",
+      inputSchema: {},
+    },
+    async () => ({ content: [{ type: "text", text: JSON.stringify(examplesReference()) }] }),
   );
 
   server.registerTool(

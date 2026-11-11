@@ -25,6 +25,17 @@ const element = z.discriminatedUnion("type", [
   elementSchema("Row"),
   elementSchema("Stat"),
   elementSchema("Progress"),
+  elementSchema("Ring"),
+  elementSchema("Trend"),
+  elementSchema("Columns"),
+  elementSchema("BarList"),
+  elementSchema("Split"),
+  elementSchema("Rows"),
+  elementSchema("Agenda"),
+  elementSchema("Dots"),
+  elementSchema("Grid"),
+  elementSchema("Checklist"),
+  elementSchema("Steps"),
   elementSchema("Note"),
 ]);
 
@@ -79,28 +90,87 @@ export function checkSpec(input: unknown): SpecCheck {
         problems.push(`Row "${key}" contains Row "${child}"; Rows cannot be nested.`);
       }
     }
+    problems.push(...propProblems(key, el));
   }
 
   return problems.length > 0 ? { ok: false, problems } : { ok: true, spec };
 }
 
+/** Words that only repeat what a Note's status icon already shows. */
+const redundantStatusText = {
+  done: ["done", "finished", "complete", "completed", "success"],
+  failed: ["failed", "failure", "error"],
+  attention: ["attention", "needs attention", "needs you", "action needed"],
+};
+
+/** Rules that span more than one prop, which a per-field schema cannot express. */
+function propProblems(key: string, el: Spec["elements"][string]): string[] {
+  const problems: string[] = [];
+  switch (el.type) {
+    case "Progress": {
+      const { supportingText, trailingText } = el.props;
+      if (trailingText && !supportingText) {
+        problems.push(`Progress "${key}" has trailingText without supportingText; trailingText is the right-hand end of that line.`);
+      } else if (trailingText && supportingText && supportingText.length + trailingText.length > 22) {
+        problems.push(`Progress "${key}": supportingText and trailingText share one line, so together they can be at most 22 characters.`);
+      }
+      break;
+    }
+    case "Columns": {
+      const { columns, highlight } = el.props;
+      if (highlight != null && highlight >= columns.length) {
+        problems.push(`Columns "${key}": highlight ${highlight} is past the last column (${columns.length - 1}).`);
+      } else if (highlight != null && columns[highlight]?.value == null) {
+        problems.push(`Columns "${key}": the highlighted column has no value. Highlight the column the headline value belongs to.`);
+      }
+      break;
+    }
+    case "Grid": {
+      const { offset, days } = el.props;
+      if (offset + days.length > 42) problems.push(`Grid "${key}": offset plus days is ${offset + days.length}; the grid holds at most 42 cells.`);
+      break;
+    }
+    case "Steps": {
+      const { steps, current } = el.props;
+      if (current >= steps.length) {
+        problems.push(`Steps "${key}": current ${current} is past the last step (${steps.length - 1}). When the job is finished, use a Note with status "done".`);
+      }
+      break;
+    }
+    case "Note": {
+      const { status, text } = el.props;
+      const said = text.trim().toLowerCase().replace(/[.!]+$/, "");
+      if (status && redundantStatusText[status].includes(said)) {
+        problems.push(`Note "${key}": the ${status} icon already says "${text.trim()}". Use the text to say what ${status === "done" ? "finished" : status === "failed" ? "failed" : "is needed"}.`);
+      }
+      break;
+    }
+  }
+  return problems;
+}
+
 /** Shared writing guidance for MCP initialization and tool discovery. */
 export const widgetWritingGuidance = [
-  "Help the user answer one question at a glance. Choose the smallest useful answer before choosing components.",
-  "Default to one Stat (one label and one value) or one short Note. Empty space is intentional. A medium widget's extra capacity is optional, not a quota; add supporting items only when the user needs them at a glance.",
-  "When a short comparison adds meaning, keep it inside the Stat as supportingText. Small widgets show label, styled value, and supportingText together. For example: This Week / $312.50 / Down 18% from last month. Do not flatten these into a Note or put the comparison in a separate leaf that the small widget hides. Omit supportingText when unnecessary; use caption for detail-only qualifications.",
-  "Before saving, ask: if I remove this word or element, does the user lose meaning? If not, remove it. Avoid repeated headings, redundant currency codes, save timestamps, source commentary, and decorative status text.",
+  "Help the user answer one question at a glance. Decide the question first, then call get_examples and adapt the design that answers that kind of question. Every example is a complete, valid spec.",
+  "Default to one leaf. The first leaf is the whole small widget, so one design is one leaf: a chart, bar or list belongs to the component that draws it. Medium widgets add at most the next two leaves beside it; a single leaf on a medium widget spreads its chart or list across the width. Empty space is intentional and medium capacity is not a quota.",
+  "Choose the component by what the data is, not by what looks rich. One number is a Stat. Use Trend, Columns, Progress, Ring, BarList, Split, Rows, Agenda, Dots, Grid, Checklist or Steps only when the user needs the extra shape at a glance and you have the data for it.",
+  "When a short comparison adds meaning, keep it inside the Stat as supportingText, or as a change chip when the direction is the point. Small widgets show label, styled value, and supportingText together. For example: This Week / $312.50 / Down 18% from last month. Do not flatten these into a Note or put the comparison in a separate leaf that the small widget hides. Omit supportingText when unnecessary; use caption for detail-only qualifications.",
+  "Before saving, ask: if I remove this word or element, does the user lose meaning? If not, remove it. Avoid repeated headings, redundant currency codes, source commentary, and decorative status text. When an icon, color or chip already says something, use the words to add information instead of repeating it. Never write a save time into text; set the Board's showUpdated when a stale board would mislead.",
   "Simplicity must preserve meaning. Keep the time period, units, and essential scope or exclusions in the visible label/value. Captions and Board titles appear only in details, so never rely on them to explain what the main number means.",
-  "Respect the requested calculation exactly. Excluding housing does not mean excluding every fixed expense. Use verified data; never invent an amount, budget, percentage, or freshness claim. Resolve material ambiguity from connected context or ask one focused question before calculating.",
+  "Respect the requested calculation exactly. Excluding housing does not mean excluding every fixed expense. Use verified data; never invent an amount, budget, percentage, or freshness claim. Chart points, bar fractions, segment shares and grid days are data too: send only values you have verified, never a plausible shape. Resolve material ambiguity from connected context or ask one focused question before calculating.",
   "Example: for weekly spending excluding housing, use label \"Week · excluding housing\" and the verified currency amount. Keep the reason housing is excluded and the exact date range in details. Do not add monthly totals, pending amounts, a budget, or a progress bar unless requested.",
-  "Small widgets show the first leaf only; medium widgets may show the next two. Captions are detail-only; extra Stat, Progress, and Note leaves can appear on medium widgets. Keep unneeded report sections out of the canvas rather than filling the available space. Canvas save time is not source freshness.",
+  "Tone is semantic: color only what needs attention. The Board's alert paints the whole widget; reserve it for when the user must act now and clear it afterwards. Keep unneeded report sections out of the canvas rather than filling the available space.",
 ].join("\n");
 
-/** Human/agent-readable component reference, generated from the catalog. */
+/**
+ * Human/agent-readable component reference, generated from the catalog.
+ * Prop details are in the input schema and complete specs come from
+ * get_examples, so this only says what each component is for.
+ */
 export function catalogReference(): string {
-  const lines: string[] = [widgetWritingGuidance];
+  const lines: string[] = [widgetWritingGuidance, "Components:"];
   for (const [name, def] of Object.entries(components)) {
-    lines.push(`- ${name}: ${def.description} Example props: ${JSON.stringify(def.example)}`);
+    lines.push(`- ${name}: ${def.description}`);
   }
   return lines.join("\n");
 }
